@@ -15,6 +15,10 @@ public class ApprovalReportDTO {
     private Integer yearPeriod;
     private String status;
     private Boolean isDeleted = false;
+
+    public ApprovalReportDTO(String status) {
+        this.status = status;
+    }
     
     public ApprovalReportDTO(Integer id, Integer managerId, String managerName, Integer monthPeriod, Integer yearPeriod, String status) {
         this.id = id;

@@ -26,6 +26,18 @@ public interface ApprovalReportRepository extends JpaRepository<ApprovalReport, 
 
     @Query("""
         SELECT 
+            new com.example.timesheetreport.models.DTO.ApprovalReportDTO(
+                ar.id, m.id, m.name, ar.month_period, ar.year_period, ar.status
+            )
+        FROM ApprovalReport ar
+        JOIN ar.manager m
+        JOIN m.user u
+        WHERE ar.is_deleted = false AND u.username = ?1 AND ar.id = ?2
+    """)
+    public ApprovalReportDTO getIdByManager(String username, Integer id);
+
+    @Query("""
+        SELECT 
             new com.example.timesheetreport.models.DTO.ReportDTO(
                 r.id, e.id, r.status, r.date, r.project_name, r.client_name, r.activity, r.hour, r.remarks, ar.id
             )
@@ -34,7 +46,7 @@ public interface ApprovalReportRepository extends JpaRepository<ApprovalReport, 
         JOIN r.approvalReport ar
         JOIN ar.manager m
         JOIN m.user u
-        WHERE ar.is_deleted = false AND u.username = ?1 AND ar.id = ?2 AND ar.status = 'SUBMITTED'
+        WHERE r.is_deleted = false AND u.username = ?1 AND ar.id = ?2
     """)
     public List<ReportDTO> getByManager(String username, Integer id);
 

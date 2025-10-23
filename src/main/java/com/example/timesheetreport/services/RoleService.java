@@ -2,6 +2,8 @@ package com.example.timesheetreport.services;
 
 import java.util.List;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +40,7 @@ public class RoleService {
     }
 
     public Boolean remove(Integer id) {
-        Role role = roleRepository.findById(id).orElse(null);
+        Role role = roleRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         if (role != null) {
             role.setIs_deleted(true);

@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -40,7 +42,7 @@ public class UserService implements UserDetailsService {
     public UserDTO save(UserDTO userDTO) {
         User user = new User();
         user.setId(userDTO.getId());
-        user.setRole(roleRepository.findById(userDTO.getRoleId()).orElseThrow(() -> new RuntimeException("Role not found")));
+        user.setRole(roleRepository.findById(userDTO.getRoleId()).orElseThrow(() -> new EntityNotFoundException("Role not found")));
 
         User resultUser = userRepository.save(user);
 
@@ -48,7 +50,7 @@ public class UserService implements UserDetailsService {
     }
 
     public Boolean remove(Integer id) {
-        User user = userRepository.findById(id).orElse(null);
+        User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         if (user != null) {
             user.setIs_deleted(true);

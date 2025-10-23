@@ -4,6 +4,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,7 +46,7 @@ public class ReportService {
         EmployeeDTO empDTO = employeeRepository.getEmployeeByUsername(username);
 
         report.setId(reportDTO.getId());
-        report.setEmployee(employeeRepository.findById(empDTO.getId()).orElseThrow(() -> new RuntimeException("Employee not found")));
+        report.setEmployee(employeeRepository.findById(empDTO.getId()).orElseThrow(() -> new EntityNotFoundException("Employee not found")));
         report.setStatus(reportDTO.getStatus());
         report.setDate(reportDTO.getDate());
         report.setProject_name(reportDTO.getProjectName());
@@ -54,7 +56,7 @@ public class ReportService {
         report.setRemarks(reportDTO.getRemarks());
 
         // approval report
-        Employee manager = employeeRepository.findById(empDTO.getManagerId()).orElseThrow(() -> new RuntimeException("Manager not found"));
+        Employee manager = employeeRepository.findById(empDTO.getManagerId()).orElseThrow(() -> new EntityNotFoundException("Manager not found"));
 
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Jakarta"));
         cal.setTime(report.getDate());

@@ -2,6 +2,8 @@ package com.example.timesheetreport.services;
 
 import java.util.List;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -48,11 +50,11 @@ public class EmployeeService {
         Employee employee = new Employee();
 
         employee.setId(employeeDTO.getId());
-        employee.setDivision(divisionRepository.findById(employeeDTO.getDivisionId()).orElseThrow(() -> new RuntimeException("Division not found")));
+        employee.setDivision(divisionRepository.findById(employeeDTO.getDivisionId()).orElseThrow(() -> new EntityNotFoundException("Division not found")));
         if (employeeDTO.getManagerId() != null) {
             employee.setManager(
                 employeeRepository.findById(employeeDTO.getManagerId())
-                    .orElseThrow(() -> new RuntimeException("Manager not found"))
+                    .orElseThrow(() -> new EntityNotFoundException("Manager not found"))
             );
         } else {
             employee.setManager(null);
@@ -70,7 +72,7 @@ public class EmployeeService {
         user.setEmail_company(userDTO.getEmailCompany());
         user.setUsername(userDTO.getUsername());
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        user.setRole(roleRepository.findById(userDTO.getRoleId()).orElseThrow(() -> new RuntimeException("Role not found")));
+        user.setRole(roleRepository.findById(userDTO.getRoleId()).orElseThrow(() -> new EntityNotFoundException("Role not found")));
 
         userRepository.save(user);
 

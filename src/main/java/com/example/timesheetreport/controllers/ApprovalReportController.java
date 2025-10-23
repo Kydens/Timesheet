@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,7 +20,7 @@ import com.example.timesheetreport.security.JwtUtil;
 import com.example.timesheetreport.services.ApprovalReportService;
 
 @RestController
-@RequestMapping("/api/reports/approval")
+@RequestMapping("/api/approvals")
 public class ApprovalReportController {
     private final ApprovalReportService approvalReportService;
     private final ApiResponse apiResponse;
@@ -42,14 +44,23 @@ public class ApprovalReportController {
         }
     }
 
-    @GetMapping(value = {"form", "form/{id}"})
+    @GetMapping(value = {"form/{id}"})
     public ResponseEntity<Response<List<ReportDTO>>> get(@PathVariable(required = false, name = "id") Integer id, @RequestHeader(name = "Authorization") String token) {
         try {
             String bearerToken = token.replace("Bearer ", "");
             String username = jwtUtils.getUsernameFromToken(bearerToken);
-            return apiResponse.success(200, "Berhasil menampilkan approval report", approvalReportService.get(id, username));
+            return apiResponse.success(200, "Berhasil menampilkan approval report", approvalReportService.getReport(id, username));
         } catch (Exception e) {
             return apiResponse.error(500, "Gagal menampilkan approval report", e.getMessage());
+        }
+    }
+
+    @PostMapping(value = {"save"})
+    public ResponseEntity<Response<ApprovalReportDTO>> save(@RequestBody ApprovalReportDTO approvalReportDTO, @RequestHeader(name = "Authorization") String token) {
+        try {
+            return apiResponse.success(200, "Berhasil mengupdate approval report", approvalReportService.save(approvalReportDTO, token));
+        } catch (Exception e) {
+            return apiResponse.error(400, "Gagal mengupdate approval report", e.getMessage());
         }
     }
 }

@@ -59,7 +59,7 @@ public class WebSecurityConfig {
                                             ).permitAll()
 
                                             .requestMatchers(
-                                                new AntPathRequestMatcher("/api/reports/approval")
+                                                new AntPathRequestMatcher("/api/approvals/**")
                                             ).hasRole("MANAGER")
                                             
                                             .requestMatchers(
@@ -67,8 +67,7 @@ public class WebSecurityConfig {
                                             ).hasRole("STAFF")
 
                                             .requestMatchers(
-                                                new AntPathRequestMatcher("/api/employees/**"),
-                                                new AntPathRequestMatcher("/api/reports/remove")
+                                                new AntPathRequestMatcher("/api/employees/**")
                                             ).hasRole("ADMIN")
 
                                             .requestMatchers(

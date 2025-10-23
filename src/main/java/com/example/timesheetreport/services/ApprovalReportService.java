@@ -2,6 +2,8 @@ package com.example.timesheetreport.services;
 
 import java.util.List;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,24 +29,24 @@ public class ApprovalReportService {
         return approvalReportRepository.getByManager(username);
     }
 
-    public List<ReportDTO> get(Integer id, String username) {
+    public ApprovalReportDTO getId(Integer id, String username) {
+        return approvalReportRepository.getIdByManager(username, id);
+    }
+
+    public List<ReportDTO> getReport(Integer id, String username) {
         return approvalReportRepository.getByManager(username,id);
     }
 
-    public List<ReportDTO> save(ApprovalReportDTO approvalReportDTO, String username) {
-        ApprovalReport approvalReport = new ApprovalReport();
+    public ApprovalReportDTO save(ApprovalReportDTO approvalReportDTO, String username) {
+        ApprovalReport approvalReport = approvalReportRepository.findById(approvalReportDTO.getId()).orElseThrow(() -> new EntityNotFoundException("Approval report not found"));
 
-        EmployeeDTO empDTO = employeeRepository.getEmployeeByUsername(username);
+        if (approvalReportDTO.getStatus().equals("SUBMITTED")) {
+            throw new IllegalStateException("Report already approved");
+        }
 
-        approvalReport.setId(approvalReportDTO.getId());
-        approvalReport.setManager(employeeRepository.findById(empDTO.getManagerId()).orElseThrow(() -> new RuntimeException("Manager not found")));
-        approvalReport.setMonth_period(approvalReportDTO.getMonthPeriod());
-        approvalReport.setMonth_period(approvalReportDTO.getYearPeriod());
         approvalReport.setStatus(approvalReportDTO.getStatus());
-
-        ApprovalReport resultReport = approvalReportRepository.save(approvalReport);
-
-        return get(resultReport.getId(), username);
+        approvalReportRepository.save(approvalReport);
+        return getId(approvalReport.getId(), username);
     }
 
     public Boolean remove(Integer id, String username) {
